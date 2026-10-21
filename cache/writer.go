@@ -2,14 +2,20 @@ package cache
 
 import (
 	"net/http"
-	"go.uber.org/zap"
 	"strconv"
+
+	"go.uber.org/zap"
 )
 
-func NewCustomWriter(rw http.ResponseWriter, r *http.Request, db *Store, logger *zap.Logger, path string, codes []string) *CustomWriter {	
-	nw := CustomWriter{rw, r, db, logger, path, 0, codes, 200}
-	
-	return &nw
+func NewCustomWriter(
+	rw http.ResponseWriter,
+	r *http.Request,
+	db *Store,
+	logger *zap.Logger,
+	path string,
+	codes []string,
+) *CustomWriter {
+	return &CustomWriter{rw, r, db, logger, path, 0, codes, 200}
 }
 
 // CustomWriter handles the response and provide the way to cache the value
@@ -18,10 +24,10 @@ type CustomWriter struct {
 	*http.Request
 	*Store
 	*zap.Logger
-	path string
-	idx int
+	path               string
+	idx                int
 	cacheResponseCodes []string
-	status int
+	status             int
 }
 
 func (r *CustomWriter) Header() http.Header {

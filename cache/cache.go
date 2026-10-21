@@ -1,30 +1,30 @@
 package cache
 
 import (
+	"encoding/json"
+	"net/http"
 	"os"
-	"strings"
 	"regexp"
 	"strconv"
-	"encoding/json"
+	"strings"
 
 	"github.com/caddyserver/caddy/v2"
 	"github.com/caddyserver/caddy/v2/caddyconfig/caddyfile"
 	"github.com/caddyserver/caddy/v2/caddyconfig/httpcaddyfile"
 	"github.com/caddyserver/caddy/v2/modules/caddyhttp"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 type Cache struct {
-	logger   *zap.Logger
-	Loc     string
-	PurgePath string
-	PurgeKey string
+	logger             *zap.Logger
+	Loc                string
+	PurgePath          string
+	PurgeKey           string
 	BypassPathPrefixes []string
-	BypassHome bool
+	BypassHome         bool
 	CacheResponseCodes []string
-	TTL int
-	Store *Store
+	TTL                int
+	Store              *Store
 }
 
 func init() {
@@ -32,8 +32,7 @@ func init() {
 	httpcaddyfile.RegisterHandlerDirective("wp_cache", parseCaddyfileHandler)
 }
 
-func parseCaddyfileHandler(h httpcaddyfile.Helper) (caddyhttp.MiddlewareHandler,
-	error) {
+func parseCaddyfileHandler(h httpcaddyfile.Helper) (caddyhttp.MiddlewareHandler, error) {
 	c := new(Cache)
 	if err := c.UnmarshalCaddyfile(h.Dispenser); err != nil {
 		return nil, err
@@ -160,8 +159,7 @@ func (Cache) CaddyModule() caddy.ModuleInfo {
 }
 
 // ServeHTTP implements the caddy.Handler interface.
-func (c Cache) ServeHTTP(w http.ResponseWriter, r *http.Request,
-	next caddyhttp.Handler) error {
+func (c Cache) ServeHTTP(w http.ResponseWriter, r *http.Request, next caddyhttp.Handler) error {
 	bypass := false
 	encoding := ""
 
@@ -186,9 +184,7 @@ func (c Cache) ServeHTTP(w http.ResponseWriter, r *http.Request,
 		bypass = true
 	}
 
-	
-
-	if bypass  {
+	if bypass {
 		return next.ServeHTTP(w, r)
 	}
 
@@ -229,7 +225,7 @@ func (c Cache) ServeHTTP(w http.ResponseWriter, r *http.Request,
 
 		return nil
 	}
-	
+
 	// bypass if is logged in. We don't want to cache admin bars
 	cookies := r.Header.Get("Cookie")
 	if strings.Contains(cookies, "wordpress_logged_in") {
@@ -256,10 +252,10 @@ func (c Cache) ServeHTTP(w http.ResponseWriter, r *http.Request,
 	cacheItem, err := db.Get(cacheKey)
 
 	if err != nil {
-		c.logger.Debug("wp cache - error - " + cacheKey, zap.Error(err))
+		c.logger.Debug("wp cache - error - "+cacheKey, zap.Error(err))
 	}
 
-	if err == nil {		
+	if err == nil {
 		w.Header().Set("X-WPEverywhere-Cache", "HIT")
 		w.Header().Set("Content-Type", "text/html; charset=UTF-8")
 		w.Header().Set("Server", "Caddy")
@@ -269,7 +265,6 @@ func (c Cache) ServeHTTP(w http.ResponseWriter, r *http.Request,
 
 		return nil
 	}
-
 
 	return next.ServeHTTP(nw, r)
 }
