@@ -4,7 +4,7 @@ An enterprise-grade WordPress image built for scale. It uses the new FrankenPHP 
 
 ## Getting Started
 
-- [Docker Images](https://hub.docker.com/r/wpeverywhere/frankenwp "Docker Hub")
+- [Docker Images](https://github.com/BioniCosmos/frankenwp/pkgs/container/frankenwp "GitHub Packages")
 - [Slack](https://join.slack.com/t/wpeverywhere/shared_invite/zt-2k88x3jtv-dpJHRYJ2IDT9PNQpO96zxQ "Slack")
 - [Website](https://wpeverywhere.com)
 
